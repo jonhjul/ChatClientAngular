@@ -1,0 +1,23 @@
+<h2>Welcome to chat!</h2>
+<p>Log in to continue</p>
+
+<div>
+  <div class="row">
+    <div class="col-xs-12">
+      <label>Notendanafn:</label>
+      <input type="text" autofocus ng-model="nick" ng-keyup="checkIfEnter($event)" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <button ng-click="onLogin()">Login</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      {{errorMessage}}
+    </div>
+  </div>
+</div>

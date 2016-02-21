@@ -1,0 +1,20 @@
+
+<div>
+  <ul>
+    <li>Create/Join Channel</li>
+    <li>
+      <input type="text" ng-model="roomName" placeholder="Chanel name" ng-keyup="checkIfEnter($event)"></input>
+    </li>
+    <li>
+      <input type="text" ng-model="pass" placeholder="Password"></input>
+    </li>
+    <li>
+      <button ng-click="joinroom()">Join</button>
+    </li>
+  </ul>
+</div>
+
+<h2>List of available channels</h2>
+<ul>
+  <li ng-repeat="room in rooms"><a ng-href="#/room/{{room.name}}">{{room.topic}}</a></li>
+</ul>
