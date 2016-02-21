@@ -45,20 +45,3 @@ angular
         redirectTo: '/'
       });
   });
-
-
-  angular.module("test",["ui.bootstrap", "ng", "ngRoute"])
-.config(function($routeProvider, $locationProvider){
-  $routeProvider.when("/index",{
-    templateUrl: "/login/login.html",
-    controller: "LoginCtrl"
-  }).when("/rooms", {
-    templateUrl: "roomlist/roomlist.html",
-    controller: "RoomlistCtrl"
-  }).when("/rooms/:roomId", {
-    templateUrl: "app/views/room.html",
-    controller: "RoomCtrl"
-  }).otherwise({
-    redirectTo: "/index"
-  });
-});
