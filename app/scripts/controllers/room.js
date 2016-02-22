@@ -1,10 +1,16 @@
 angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$routeParams", "ChatResource",
   function LoginCtrl($scope, $location, $routeParams, ChatResource) {
-
+    $scope.room = {};
     var socket = ChatResource.getConnection();
     socket.on("roomlist", function(data) {
       $scope.rooms = data;
       $scope.room = data[$routeParams.roomId];
+      for(var name in data){
+        if(name == $routeParams.roomId){
+          $scope.room.name = name;
+        }
+        console.log(name);
+      }
       console.log(data);
 
       $scope.$apply();
@@ -14,6 +20,7 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
     socket.on("updatechat", function(roomName,messageHistory) {
       console.log(roomName);
       console.log(messageHistory);
+      $scope.room.name = roomName;
       $scope.room.messageHistory = messageHistory;
       $scope.$apply();
     });
