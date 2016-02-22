@@ -16,9 +16,11 @@ angular.module("ChatApp").controller("LoginCtrl", ["$scope", "$location", "ChatR
       }
     }
     $scope.nick = "";
-    $scope.error = false;
+    $scope.errmsg = "";
     $scope.onLogin = function() {
       ChatResource.login($scope.nick);
+      $scope.errmsg = ChatResource.getErrorMsg();
+  //console.log($scope.errmsg);
     }
   }
 ]);

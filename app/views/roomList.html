@@ -1,17 +1,9 @@
 
 <div>
-  <ul>
-    <li>Create/Join Channel</li>
-    <li>
-      <input type="text" ng-model="roomName" placeholder="Chanel name" ng-keyup="checkIfEnter($event)"></input>
-    </li>
-    <li>
-      <input type="text" ng-model="pass" placeholder="Password"></input>
-    </li>
-    <li>
-      <button ng-click="joinroom()">Join</button>
-    </li>
-  </ul>
+  <h2>Create/Join Channel</h2>
+    Channel name: <input type="text" ng-model="channel.roomName" ng-keyup="checkIfEnter($event)" /><br />
+    Password: <input type="text" ng-model="channel.pass" ng-keyup="checkIfEnter($event)" /><br />
+    <input type="button" ng-click="joinChannel()" value="Join" />
 </div>
 
 <h2>List of available channels</h2>

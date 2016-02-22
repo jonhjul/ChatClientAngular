@@ -1,29 +1,34 @@
 angular.module('ChatApp')
   .controller('RoomListCtrl', function($scope, $route, $routeParams, $location, ChatResource) {
-    var test = ChatResource.isUserLogedIn();
-    console.log(ChatResource.isUserLogedIn());
-    if(!test){
+    var logedIn = ChatResource.isUserLogedIn();
+    if(!logedIn){
         $location.path('/login');
     }
 
     var socket = ChatResource.getConnection();
-    $scope.logedIn = true;
     socket.on("roomlist", function(data) {
       $scope.rooms = data;
       $scope.$apply();
     });
 
 
-    $scope.gotoRoom = function(room) {
+    $scope.channel = {
+      roomName: "",
+      pass: ""
+  };
+
+    $scope.joinChannel = function(){
+        ChatResource.joinRoom($scope.channel.roomName, $scope.channel.pass);
+    }
+    $scope.gotoRoom = function(room, pass) {
       for (var prop in $scope.rooms) {
-        // object[prop]
         if ($scope.rooms[prop] == room) {
-          $location.path('room/' + prop)
+          ChatResource.joinRoom(prop, pass);
         }
       }
     }
 
-
+    //  Check if the user is loged in
     socket.on("userlist", function(userlist) {
       var isFound = false;
       for (var i in userlist) {
@@ -40,15 +45,16 @@ angular.module('ChatApp')
     socket.emit("rooms");
     socket.emit("users");
 
-    $scope.checkIfEnter = function($event) {
+
+    $scope.checkIfEnter = function($event){
       var keyCode = $event.which || $event.keyCode;
       if (keyCode === 13) {
-        $scope.joinroom();
+          $scope.joinChannel();
       }
     }
-    $scope.joinroom = function() {
-      $scope.roompath = "/room/" + $scope.roomName;
-      $location.path($scope.roompath);
-    }
+
+    socket.on('updatetopic', function(room, roomTopic, socUsername){
+      socket.emit('rooms');
+    })
 
   });

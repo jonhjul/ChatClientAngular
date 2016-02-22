@@ -5,20 +5,35 @@
   <div class="col-md-9">
     <ul>
       <li ng-repeat="msg in room.messageHistory">
-        {{msg.nick}}: {{msg.message}}
+            {{msg.nick}}:  {{msg.message}}
       </li>
     </ul>
     <input type="text" ng-model="sendMsg" ng-keyup="checkIfEnter($event)"/>
   </div>
 </div>
 
+<div class="col-md-3">
+    <input type="text" ng-model="topicVal" ng-keyup="checkIfTopicEnter($event)"/>
+    <input type="button" value="Change topic" ng-click="changeTopic()"/>
+</div>
 
-<div >
-  <div class="col-md-3">
+<div class="col-md-3">
+    <input type="text" ng-model="newChannelPass" ng-keyup="checkIfChanPassEnter($event)"/>
+    <input type="button" value="Change channel password" ng-click="changeChanPass()"/>
+</div>
+
+<div class="col-md-3">
+    <label for="repeatSelect"> Repeat select: </label>
+    <select name="repeatSelect" id="repeatSelect" ng-model="data.repeatSelect">
+      <option ng-repeat="option in data.availableOptions" value="{{option.id}}">{{option.name}}</option>
+    </select>
+</div>
+
+
+<div class="col-md-3">
     <ul>
-      <li ng-repeat="user in room.users">
-          {{user}}
+      <li ng-repeat="user in users">
+          <input type="button" value="{{user}}" ng-readonly="true"/>
       </li>
     </ul>
   </div>
-</div>

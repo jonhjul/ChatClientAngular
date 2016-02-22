@@ -17,13 +17,13 @@ angular
     'ngSanitize',
     'ngTouch'
   ])
-  .config(function ($routeProvider) {
+  .config(function($routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         controllerAs: 'main'
-      }).when('/login',{
+      }).when('/login', {
         templateUrl: 'views/login.html',
         controller: 'LoginCtrl',
         controllerAs: 'login'
@@ -46,44 +46,72 @@ angular
       });
   });
 
-  angular.module("ChatApp").factory("ChatResource",['$rootScope', '$location', function ($rootScope, $location) {
-    var username = "";
-    return {
-        getUserName: function(){
+angular.module("ChatApp").factory("ChatResource", ['$rootScope', '$location', function($rootScope, $location) {
+      var username = "";
+      var errorMessage = "";
+      return {
+        getConnection: function getConnection() {
+          var socket = io.connect("http://" + $location.host() + ":8080"); //"http://localhost:8080
+          return socket;
+        },
+        getUserName: function() {
           return username
         },
-        login: function login(user, callback){
-          // TODO:
+        login: function login(user, callback) {
           var socket = this.getConnection();
           socket.emit("adduser", user, function(success) {
             if (!success) {
               var errorMessage = "Login failed";
               var error = true;
-              console.log("error: " +error);
+              console.log("Error message: " + errorMessage);
+              console.log("Login name taken: " + error);
             } else {
               username = user;
               $location.path("/rooms/");
-              $rootScope.$apply()
+              $rootScope.$apply();
             }
           });
         },
-        getRoomList: function getRoomList(callback){
-          // TODO:
-        },
-        getConnection: function getConnection(){
-          var socket = io.connect("http://" + $location.host() + ":8080" ); //"http://localhost:8080
-          return socket;
-        },
-        isUserLogedIn: function isUserLogedIn(){
-            return (this.getUserName().length > 0);
-        },
-        sendMsg: function sendMsg(msg,roomName){
+        joinRoom: function joinRoom(roomName, pass, callback) {
           var socket = this.getConnection();
-          var data = {
-            msg: msg,
-            roomName: roomName
+          var joinObj = {
+            room: roomName,
+            pass: pass
           }
-          socket.emit("sendmsg",data);
+          socket.emit("joinroom", joinObj, function(success) {
+              if(success){
+                $location.path('room/' + roomName)
+                $rootScope.$apply();
+              }else{
+                console.log("joinroom fail");
+              }
+            });
+            },
+            getErrorMsg: function getErrorMsg() {
+              return errorMessage;
+            },
+            getRoomList: function getRoomList(callback) {
+              // TODO:
+            },
+            isUserLogedIn: function isUserLogedIn() {
+              return (this.getUserName().length > 0);
+            },
+            sendMsg: function sendMsg(msg, roomName) {
+              var socket = this.getConnection();
+              var data = {
+                msg: msg,
+                roomName: roomName
+              }
+              socket.emit("sendmsg", data);
+            },
+            newTopic: function newTopic(topic, roomName) {
+              var socket = this.getConnection();
+              var data = {
+                topic: topic,
+                roome: roomName
+              }
+              socket.emit("settopic", data);
+
+            }
         }
-    }
-  }]);
+      }]);
