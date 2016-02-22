@@ -1,37 +1,33 @@
 angular.module('ChatApp')
-  .controller('RoomListCtrl', function($scope, $route, $routeParams, $location) {
+  .controller('RoomListCtrl', function($scope, $route, $routeParams, $location, ChatResource) {
+    var test = ChatResource.isUserLogedIn();
+    console.log(ChatResource.isUserLogedIn());
+    if(!test){
+        $location.path('/login');
+    }
 
-    var socket = io.connect("http://localhost:8080");
+    var socket = ChatResource.getConnection();
     $scope.logedIn = true;
-
-
     socket.on("roomlist", function(data) {
       $scope.rooms = data;
-      console.log(data);
-      for (var prop in $scope.rooms) {
-        // object[prop]
-        console.log(prop);
-      }
       $scope.$apply();
     });
 
+
     $scope.gotoRoom = function(room) {
-      console.log(room);
       for (var prop in $scope.rooms) {
         // object[prop]
         if ($scope.rooms[prop] == room) {
           $location.path('room/' + prop)
         }
-        console.log($scope.rooms[prop]);
       }
     }
 
 
     socket.on("userlist", function(userlist) {
-      console.log(userlist);
       var isFound = false;
       for (var i in userlist) {
-        if (userlist[i] === $routeParams.nick) {
+        if (userlist[i] === ChatResource.getUserName()) {
           isFound = true;
           break;
         }

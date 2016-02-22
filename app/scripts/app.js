@@ -32,7 +32,7 @@ angular
         templateUrl: "views/room.html",
         controller: "RoomCtrl"
       })
-      .when("/rooms/:nick", {
+      .when("/rooms/", {
         templateUrl: "views/roomList.html",
         controller: "RoomListCtrl"
       })
@@ -45,3 +45,37 @@ angular
         redirectTo: '/'
       });
   });
+
+  angular.module("ChatApp").factory("ChatResource",['$rootScope', '$location', function ($rootScope, $location) {
+    var username = "";
+    return {
+        getUserName: function(){
+          return username
+        },
+        login: function login(user, callback){
+          // TODO:
+          var socket = this.getConnection();
+          socket.emit("adduser", user, function(success) {
+            if (!success) {
+              var errorMessage = "Login failed";
+              var error = true;
+              console.log("error: " +error);
+            } else {
+              username = user;
+              $location.path("/rooms/");
+              $rootScope.$apply()
+            }
+          });
+        },
+        getRoomList: function getRoomList(callback){
+          // TODO:
+        },
+        getConnection: function getConnection(){
+          var socket = io.connect("http://localhost:8080");
+          return socket;
+        },
+        isUserLogedIn: function isUserLogedIn(){
+            return (this.getUserName().length > 0);
+        }
+    }
+  }]);

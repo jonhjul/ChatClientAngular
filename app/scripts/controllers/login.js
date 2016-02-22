@@ -1,9 +1,9 @@
 "use strict";
 
-angular.module("ChatApp").controller("LoginCtrl", ["$scope", "$location",
-  function LoginCtrl($scope, $location) {
+angular.module("ChatApp").controller("LoginCtrl", ["$scope", "$location", "ChatResource",
+  function LoginCtrl($scope, $location, ChatResource) {
 
-    var socket = io.connect("http://localhost:8080");
+    var socket = ChatResource.getConnection();
     socket.on("roomlist", function(data) {
       $scope.rooms = data;
       $scope.$apply();
@@ -18,16 +18,7 @@ angular.module("ChatApp").controller("LoginCtrl", ["$scope", "$location",
     $scope.nick = "";
     $scope.error = false;
     $scope.onLogin = function() {
-      socket.emit("adduser", $scope.nick, function(success) {
-        if (!success) {
-          $scope.errorMessage = "Login failed";
-          $scope.error = true;
-        } else {
-          $scope.tes = "/rooms/" + $scope.nick;
-          $location.path($scope.tes);
-        }
-        $scope.$apply();
-      });
+      ChatResource.login($scope.nick);
     }
   }
 ]);
