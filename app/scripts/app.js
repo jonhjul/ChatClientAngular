@@ -71,11 +71,19 @@ angular
           // TODO:
         },
         getConnection: function getConnection(){
-          var socket = io.connect("http://localhost:8080");
+          var socket = io.connect("http://" + $location.host() + ":8080" ); //"http://localhost:8080
           return socket;
         },
         isUserLogedIn: function isUserLogedIn(){
             return (this.getUserName().length > 0);
+        },
+        sendMsg: function sendMsg(msg,roomName){
+          var socket = this.getConnection();
+          var data = {
+            msg: msg,
+            roomName: roomName
+          }
+          socket.emit("sendmsg",data);
         }
     }
   }]);

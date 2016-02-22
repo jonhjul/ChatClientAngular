@@ -1,8 +1,24 @@
 <h2>Welcome to: {{room.name}}</h2>
 <p> Topic: {{room.topic}} </p>
-<ul>
-  <li ng-repeat="user in room.users">
-      {{user}}
-      
-  </li>
-</ul>
+
+<div>
+  <div class="col-md-9">
+    <ul>
+      <li ng-repeat="msg in room.messageHistory">
+        {{msg.nick}}: {{msg.message}}
+      </li>
+    </ul>
+    <input type="text" ng-model="sendMsg" ng-keyup="checkIfEnter($event)"/>
+  </div>
+</div>
+
+
+<div >
+  <div class="col-md-3">
+    <ul>
+      <li ng-repeat="user in room.users">
+          {{user}}
+      </li>
+    </ul>
+  </div>
+</div>
