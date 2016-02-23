@@ -3,10 +3,18 @@
 angular.module("ChatApp").factory("ChatResource", ['$rootScope', '$location', function($rootScope, $location) {
   var username = "";
   var errorMessage = "";
+  var privateMsgs = [];
   return {
     getConnection: function getConnection() {
       var socket = io.connect("http://" + $location.host() + ":8080"); //"http://localhost:8080
       return socket;
+    },
+    getPrivateMsgs: function getPrivateMsgs(){
+        return privateMsgs;
+    },
+    pushPrivateMsg: function pushPrivateMsg(msgObj){
+        privateMsgs.push(msgObj);
+        console.log(privateMsgs);
     },
     getUserName: function() {
       return username
@@ -80,14 +88,24 @@ angular.module("ChatApp").factory("ChatResource", ['$rootScope', '$location', fu
         console.log(operation);
       });
     },
-    sendPrivateMsg: function sendPrivateMsg(obj){
+    sendPrivateMsg: function sendPrivateMsg(obj, callback){
       console.log(obj);
       if(obj){
         var socket = this.getConnection();
         socket.emit("privatemsg", obj, function(success) {
           console.log("priv emit");
           console.log(success);
-          
+          obj.nick = username;
+          if(success){
+            privateMsgs.push(obj);
+            callback(true);
+          }
+          else{
+            obj.nick = "x " + username;
+            privateMsgs.push(obj);
+            callback(false);
+          }
+          $rootScope.$apply();
         });
       }
     }

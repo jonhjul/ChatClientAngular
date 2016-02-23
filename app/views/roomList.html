@@ -1,8 +1,8 @@
 
 <div class="col-xs-6" >
   <h2>Create/Join Channel</h2>
-    <input type="text" ng-model="channel.roomName" ng-keyup="checkIfEnter($event)" placeholder="Channel name" /><br />
-    <input type="text" ng-model="channel.pass" ng-keyup="checkIfEnter($event)" placeholder="Password"/><br />
+    <input type="text" ng-model="channel.roomName" class="form-control" ng-keyup="checkIfEnter($event)" placeholder="Channel name" /><br />
+    <input type="text" ng-model="channel.pass" class="form-control" ng-keyup="checkIfEnter($event)" placeholder="Password"/><br />
     <input type="button" ng-click="joinChannel()" value="Join" />
 </div>
 

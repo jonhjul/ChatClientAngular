@@ -2,33 +2,60 @@
 <h3>Channel name: {{room.name}} </h3>
 <p> Topic: {{room.topic}} </p>
 
-<div style="min-height: 200 px" class="col-md-8">
-  <ul style="max-width: 350px; max-height: 350px;  overflow: auto;">
-    <li ng-repeat="msg in room.messageHistory">
-      {{msg.nick}}: {{msg.message}}
-    </li>
-    <div id="bottom"></div>
-  </ul>
+
+
+<div style="max-height: 400px; overflow-y: scroll; overflow-x:auto" class="col-md-4">
+  <table class="table table-striped" >
+    <thead>
+      <tr>
+        <th class="col-md-2"></th>
+        <th class="col-md-10"></th>
+      </tr>
+    </thead>
+    <tbody >
+      <tr ng-repeat="line in room.messageHistory">
+        <td>{{line.nick}}</td>
+        <td>{{line.message}}</td>
+      </tr>
+    </tbody>
+  </table>
   <span>{{userName}}</span>
-  <input type="text" ng-model="sendMsg" width="300px" ng-keyup="checkIfEnter($event)" />
+  <input type="text" class="form-control" ng-model="sendMsg" style="top: 400px;" ng-keyup="checkIfEnter($event)" />
+  <div id="bottom">
+  </div>
 </div>
 
 <div class="col-md-4">
+  <table class="table table-striped">
+    <thead>
+      Private messages
+      <tr>
+        <th class="col-md-2">Username</th>
+        <th class="col-md-10">Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="msgObj in privateMsgs">
+        <td>{{msgObj.nick}}</td>
+        <td>{{msgObj.message}}</td>
+      </tr>
+    </tbody>
+  </table>
 
-  <div class="alert alert-warning" role="alert" ng-show="privateMsgsOpen">
-    <a class="pull-right" href="" ng-click="closeAlert()">&times;</a>
-    <div ng-repeat="msgObj in privateMsgs">
-      <span>{{msgObj.userFrom}}: {{msgObj.msg}}  </span>
-    </div>
+
+  <div class="alert alert-warning" role="alert" ng-show="errorActive">
+    <a class="pull-right" href="" ng-click="closeAlert()">&times;</a> {{errorMessage}}
   </div>
 
+</div>
 
+<div class="col-md-4">
   <div class="input-group">
     <span class="input-group-btn">
-      <button type="button" class="btn btn-danger" ng-click="leaveChannel()">Leave room&nbsp;&nbsp;</button>
-    </span>
+        <button type="button" class="btn btn-danger" ng-click="leaveChannel()">Leave room&nbsp;&nbsp;</button>
+      </span>
 
-    <select ng-model="operation" class="form-control">
+    <select ng-model="operation" class="form-control" ng-show="isUserOp">
       <option value="" disabled selected>Select operation</option>
       <option value="op">op</option>
       <option value="deop">deop</option>
@@ -37,17 +64,17 @@
       <option value="unban">unban</option>
     </select>
   </div>
-  <div class="input-group">
+  <div class="input-group" ng-show="isUserOp">
     <span class="input-group-btn">
-      <button type="button" class="btn btn-success" ng-click="changeTopic()">Change topic</button>
-    </span>
+        <button type="button" class="btn btn-success" ng-click="changeTopic()">Change topic</button>
+      </span>
     <input type="text" class="form-control" ng-model="topicVal" ng-keyup="checkIfTopicEnter($event)" placeholder="Set new topic" />
   </div>
 
-  <div class="input-group">
+  <div class="input-group" ng-show="isUserOp">
     <span class="input-group-btn">
-      <button type="button" class="btn btn-warning"  ng-click="changeChanPass()">Set password</button>
-    </span>
+        <button type="button" class="btn btn-warning"  ng-click="changeChanPass()">Set password</button>
+      </span>
     <input type="text" class="form-control" ng-model="newChannelPass" placeholder="Set channel password" ng-keyup="checkIfChanPassEnter($event)" placeholder="Set channel password" />
   </div>
 
@@ -56,7 +83,7 @@
   <ul>
     <li ng-repeat="ops in room.ops">
       <span>Op
-      </span>
+        </span>
       <input type="button" class="btn btn-default" value="{{ops}}" ng-click="selectedUser(ops)" ng-readonly="true" />
     </li>
 
@@ -64,7 +91,7 @@
       <input type="button" value="{{user}}" class="btn btn-default" ng-click="selectedUser(user)" ng-readonly="true" />
     </li>
 
-    <li ng-repeat="banned in room.banned">
+    <li ng-repeat="banned in room.banned" ng-show="isUserOp">
       <input type="button" value="{{banned}}" class="btn btn-danger" ng-click="selectedUser(banned)" ng-readonly="true" />
     </li>
 
