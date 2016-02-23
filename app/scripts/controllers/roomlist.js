@@ -1,5 +1,11 @@
 angular.module('ChatApp')
   .controller('RoomListCtrl', function($scope, $route, $routeParams, $location, ChatResource) {
+    $scope.channel = {
+      roomName: "",
+      pass: ""
+    };
+
+
     var logedIn = ChatResource.isUserLogedIn();
     if(!logedIn){
         $location.path('/login');
@@ -10,20 +16,17 @@ angular.module('ChatApp')
       $scope.rooms = data;
       $scope.$apply();
     });
-
-
-    $scope.channel = {
-      roomName: "",
-      pass: ""
-  };
+    
+    socket.emit("rooms");
+    socket.emit("users");
 
     $scope.joinChannel = function(){
         ChatResource.joinRoom($scope.channel.roomName, $scope.channel.pass);
     }
-    $scope.gotoRoom = function(room, pass) {
+    $scope.gotoRoom = function(room) {
       for (var prop in $scope.rooms) {
         if ($scope.rooms[prop] == room) {
-          ChatResource.joinRoom(prop, pass);
+          ChatResource.joinRoom(prop, $scope.channel.pass);
         }
       }
     }
@@ -42,8 +45,6 @@ angular.module('ChatApp')
       }
     });
 
-    socket.emit("rooms");
-    socket.emit("users");
 
 
     $scope.checkIfEnter = function($event){

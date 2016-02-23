@@ -108,10 +108,22 @@ angular.module("ChatApp").factory("ChatResource", ['$rootScope', '$location', fu
               var socket = this.getConnection();
               var data = {
                 topic: topic,
-                roome: roomName
+                room: roomName
               }
               socket.emit("settopic", data);
 
+            },
+            leaveChannel: function leaveChannel(name){
+              var socket = this.getConnection();
+              socket.emit('partroom', name);
+              $location.path('rooms/');
+            },
+            userOperation: function userOperation(operation, operationObject){
+                  var socket = this.getConnection();
+                  socket.emit(operation,operationObject,function(success){
+                    console.log("userOperation");
+                    console.log(operation);
+                  });
             }
         }
       }]);

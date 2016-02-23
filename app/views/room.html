@@ -1,39 +1,41 @@
 <h2>Welcome to: {{room.name}}</h2>
 <p> Topic: {{room.topic}} </p>
 
-<div>
-  <div class="col-md-9">
-    <ul>
-      <li ng-repeat="msg in room.messageHistory">
-            {{msg.nick}}:  {{msg.message}}
-      </li>
-    </ul>
-    <input type="text" ng-model="sendMsg" ng-keyup="checkIfEnter($event)"/>
-  </div>
+<div style="min-height: 200 px" class="col-md-9">
+  <ul style="max-height: 350px;  overflow: auto;">
+    <li ng-repeat="msg in room.messageHistory">
+      {{msg.nick}}: {{msg.message}}
+    </li>
+    <div id="bottom"></div>
+  </ul>
+  <input type="text" ng-model="sendMsg" width="300px" ng-keyup="checkIfEnter($event)" />
 </div>
 
 <div class="col-md-3">
-    <input type="text" ng-model="topicVal" ng-keyup="checkIfTopicEnter($event)"/>
-    <input type="button" value="Change topic" ng-click="changeTopic()"/>
+  <input type="button" class="btn btn-danger" value="Leave room" ng-click="leaveChannel()" />
+
+  <input type="button" class="btn btn-success" value="Change topic" ng-click="changeTopic()" />
+  <input type="text" class="form-control" ng-model="topicVal" ng-keyup="checkIfTopicEnter($event)" placeholder="Set new topic" />
+
+  <input type="button" class="btn btn-warning" value="Change channel password" ng-click="changeChanPass()" />
+  <input type="text" class="form-control" placeholder="Set channel password" ng-keyup="checkIfChanPassEnter($event)" placeholder="Set channel password"  />
+
+  <select ng-model="operation" class="form-control">
+      <option >Select operation</option>
+      <option value="op" selected="selected">op</option>
+      <option value="deop">deop</option>
+      <option value="kick">kick</option>
+      <option value="ban">ban</option>
+      <option value="unban">unban</option>
+  </select>
+
+  <ul>
+    <li ng-repeat="ops in room.ops">
+      <span>Op
+      </span><input type="button" class="btn btn-default" value="{{ops}}" ng-click="selectedUser(ops)" ng-readonly="true" />
+    </li>
+    <li ng-repeat="user in room.users">
+      <input type="button" value="{{user}}" class="btn btn-default" ng-click="selectedUser(user)" ng-readonly="true" />
+    </li>
+  </ul>
 </div>
-
-<div class="col-md-3">
-    <input type="text" ng-model="newChannelPass" ng-keyup="checkIfChanPassEnter($event)"/>
-    <input type="button" value="Change channel password" ng-click="changeChanPass()"/>
-</div>
-
-<div class="col-md-3">
-    <label for="repeatSelect"> Repeat select: </label>
-    <select name="repeatSelect" id="repeatSelect" ng-model="data.repeatSelect">
-      <option ng-repeat="option in data.availableOptions" value="{{option.id}}">{{option.name}}</option>
-    </select>
-</div>
-
-
-<div class="col-md-3">
-    <ul>
-      <li ng-repeat="user in users">
-          <input type="button" value="{{user}}" ng-readonly="true"/>
-      </li>
-    </ul>
-  </div>
