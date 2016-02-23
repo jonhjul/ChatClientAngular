@@ -15,12 +15,22 @@ angular.module("ChatApp").controller("LoginCtrl", ["$scope", "$location", "ChatR
         $scope.onLogin();
       }
     }
+
     $scope.nick = "";
     $scope.errmsg = "";
     $scope.onLogin = function() {
-      ChatResource.login($scope.nick);
-      $scope.errmsg = ChatResource.getErrorMsg();
-  //console.log($scope.errmsg);
+      ChatResource.login($scope.nick, $scope.loginCallback);
     }
+
+    $scope.loginCallback = function(success){
+        console.log("London calling "+ success);
+        $scope.errmsg = "Login name taken, please select another one.";
+        $scope.$apply();
+    }
+
+    $scope.closeAlert = function(){
+        $scope.errmsg = "";
+    }
+
   }
 ]);

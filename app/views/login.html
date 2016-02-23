@@ -2,6 +2,10 @@
 <p>Log in to continue</p>
 
 <div>
+  <div class="alert alert-danger" role="alert" ng-hide="errmsg.length == 0">
+    <a class="pull-right" href="" ng-click="closeAlert()">&times;</a>
+    {{errmsg}}
+  </div>
   <div class="row">
     <div class="col-xs-4">
       <label>Username:</label>
@@ -15,9 +19,4 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-xs-12">
-      {{errmsg}}
-    </div>
-  </div>
 </div>

@@ -1,11 +1,14 @@
 angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$routeParams", "ChatResource", '$anchorScroll',
   function LoginCtrl($scope, $location, $routeParams, ChatResource, $anchorScroll) {
     $scope.room = {};
-    $scope.room.users = "";
     $scope.users = "";
     $scope.sendMsg = "";
+    $scope.privateMsgs = [];
+    $scope.privateMsgsOpen = true;
     $scope.chanPassChange = "";
     $scope.operation = "";
+    $scope.operationUnban = false;
+    $scope.userName = ChatResource.getUserName();
     var socket = ChatResource.getConnection();
 
     $scope.data = {
@@ -40,13 +43,22 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
       //$scope.room.messageHistory = $scope.room.messageHistory.slice($scope.room.messageHistory.length-20, $scope.room.messageHistory.length);
       $scope.$apply();
       $location.hash('bottom');
-
        $anchorScroll();
     });
     $scope.op =  function(){
       console.log("op");
       console.log($scope.selectedUser);
     }
+    $scope.$watch('operation', function() {
+      console.log("in operation");
+      if($scope.operation == "unban"){
+          console.log("now show unban tools");
+          $scope.operationUnban = true;
+
+      }else{
+          $scope.operationUnban = false;
+      }
+    });
 
     $scope.selectedUser = function(user){
         console.log("Selected user");
@@ -69,6 +81,16 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
         $scope.$apply();
     });
 
+    socket.on("recv_privatemsg" ,function(username, msg){
+        $scope.privateMsgsOpen = true;
+        $scope.privateMsgs.push({ msg: msg, userFrom: username});
+        $scope.$apply();
+    });
+
+    $scope.closeAlert = function(){
+        $scope.privateMsgsOpen = false;
+    }
+
     $scope.checkIfTopicEnter = function($event) {
       var keyCode = $event.which || $event.keyCode;
       if (keyCode === 13) {
@@ -85,8 +107,18 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
     $scope.checkIfEnter = function($event) {
       var keyCode = $event.which || $event.keyCode;
       if (keyCode === 13) {
-        ChatResource.sendMsg($scope.sendMsg,$routeParams.roomId);
-        $scope.sendMsg ="";
+        if($scope.sendMsg.startsWith("/msg ")){
+          var split = $scope.sendMsg.split(' ');  ChatResource.sendPrivateMsg();
+          var userTo = split[1];
+          var indexStart = $scope.sendMsg.indexOf(userTo) + userTo.length+1;
+          var msgTo = $scope.sendMsg.substring(indexStart, $scope.sendMsg.length);
+          var msgObj = {"nick": userTo, "message": msgTo};
+          $scope.privateMsgs.push({ userFrom: $scope.userName,  msg: msgTo});
+          ChatResource.sendPrivateMsg(msgObj);
+        }else{
+          ChatResource.sendMsg($scope.sendMsg,$routeParams.roomId);
+          $scope.sendMsg ="";
+        }
 
       }
     }

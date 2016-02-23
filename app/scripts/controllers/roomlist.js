@@ -14,22 +14,25 @@ angular.module('ChatApp')
     var socket = ChatResource.getConnection();
     socket.on("roomlist", function(data) {
       $scope.rooms = data;
+      for (var prop in $scope.rooms) {
+        $scope.rooms[prop].name = prop;
+      }
       $scope.$apply();
     });
-    
+
     socket.emit("rooms");
     socket.emit("users");
 
     $scope.joinChannel = function(){
         ChatResource.joinRoom($scope.channel.roomName, $scope.channel.pass);
-    }
+    };
     $scope.gotoRoom = function(room) {
       for (var prop in $scope.rooms) {
         if ($scope.rooms[prop] == room) {
           ChatResource.joinRoom(prop, $scope.channel.pass);
         }
       }
-    }
+    };
 
     //  Check if the user is loged in
     socket.on("userlist", function(userlist) {
@@ -52,10 +55,11 @@ angular.module('ChatApp')
       if (keyCode === 13) {
           $scope.joinChannel();
       }
-    }
+    };
 
     socket.on('updatetopic', function(room, roomTopic, socUsername){
       socket.emit('rooms');
-    })
+    });
+
 
   });
