@@ -45,8 +45,6 @@ angular.module("ChatApp").factory("ChatResource", ['$rootScope', '$location', fu
         if (success) {
           $location.path('room/' + roomName)
           $rootScope.$apply();
-        } else {
-          console.log("joinroom fail");
         }
       });
     },
@@ -74,7 +72,6 @@ angular.module("ChatApp").factory("ChatResource", ['$rootScope', '$location', fu
         room: roomName
       }
       socket.emit("settopic", data);
-
     },
     leaveChannel: function leaveChannel(name) {
       var socket = this.getConnection();
@@ -84,17 +81,12 @@ angular.module("ChatApp").factory("ChatResource", ['$rootScope', '$location', fu
     userOperation: function userOperation(operation, operationObject) {
       var socket = this.getConnection();
       socket.emit(operation, operationObject, function(success) {
-        console.log("userOperation");
-        console.log(operation);
       });
     },
     sendPrivateMsg: function sendPrivateMsg(obj, callback){
-      console.log(obj);
       if(obj){
         var socket = this.getConnection();
         socket.emit("privatemsg", obj, function(success) {
-          console.log("priv emit");
-          console.log(success);
           obj.nick = username;
           if(success){
             privateMsgs.push(obj);

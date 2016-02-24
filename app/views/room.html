@@ -1,10 +1,8 @@
 <h2>Welcome {{userName}}</h2>
-<h3>Channel name: {{room.name}} </h3>
 <p> Topic: {{room.topic}} </p>
 
-
-
-<div style="max-height: 400px; overflow-y: scroll; overflow-x:auto" class="col-md-4">
+<div style="max-height: 400px; min-height:400px; overflow-y: scroll; overflow-x:auto" class="col-md-4">
+  <h3>Channel: {{room.name}} </h3>
   <table class="table table-striped" >
     <thead>
       <tr>
@@ -19,19 +17,18 @@
       </tr>
     </tbody>
   </table>
-  <span>{{userName}}</span>
-  <input type="text" class="form-control" ng-model="sendMsg" style="top: 400px;" ng-keyup="checkIfEnter($event)" />
-  <div id="bottom">
-  </div>
+  <div id="bottom"></div>
 </div>
 
-<div class="col-md-4">
+
+
+<div style="max-height: 400px; min-height:400px; overflow-y: scroll; overflow-x:auto" class="col-md-4">
+  <h3>Private messages</h3>
   <table class="table table-striped">
     <thead>
-      Private messages
       <tr>
-        <th class="col-md-2">Username</th>
-        <th class="col-md-10">Message</th>
+        <th class="col-md-2"></th>
+        <th class="col-md-10"></th>
       </tr>
     </thead>
     <tbody>
@@ -46,7 +43,7 @@
   <div class="alert alert-warning" role="alert" ng-show="errorActive">
     <a class="pull-right" href="" ng-click="closeAlert()">&times;</a> {{errorMessage}}
   </div>
-
+  <div  id="bottom2"></div>
 </div>
 
 <div class="col-md-4">
@@ -55,13 +52,13 @@
         <button type="button" class="btn btn-danger" ng-click="leaveChannel()">Leave room&nbsp;&nbsp;</button>
       </span>
 
-    <select ng-model="operation" class="form-control" ng-show="isUserOp">
-      <option value="" disabled selected>Select operation</option>
-      <option value="op">op</option>
-      <option value="deop">deop</option>
-      <option value="kick">kick</option>
-      <option value="ban">ban</option>
-      <option value="unban">unban</option>
+    <select ng-model="operation" class="form-control" >
+      <option value="pm" selected>Private chat</option>
+      <option value="op" ng-show="isUserOp">op</option>
+      <option value="deop" ng-show="isUserOp">deop</option>
+      <option value="kick" ng-show="isUserOp">kick</option>
+      <option value="ban" ng-show="isUserOp">ban</option>
+      <option value="unban" ng-show="isUserOp">unban</option>
     </select>
   </div>
   <div class="input-group" ng-show="isUserOp">
@@ -96,4 +93,7 @@
     </li>
 
   </ul>
+</div>
+<div>
+  <input type="text" class="form-control" ng-model="sendMsg" style="top: 400px;" ng-keyup="checkIfEnter($event)" />
 </div>

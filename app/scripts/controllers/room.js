@@ -21,10 +21,13 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
           $scope.room.name = name;
         }
       }
-      for(var op in $scope.room.ops){
-          if($scope.room.ops[op] == $scope.userName){
+      $scope.isUserOp = false;
+      if ($scope.room) {
+        for (var op in $scope.room.ops) {
+          if ($scope.room.ops[op] == $scope.userName) {
             $scope.isUserOp = true;
           }
+        }
       }
       $scope.$apply();
     });
@@ -40,15 +43,10 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
         $anchorScroll();
       }
     });
-    $scope.op = function() {
-      console.log("op");
-      console.log($scope.selectedUser);
-    }
     $scope.$watch('operation', function() {
       if ($scope.operation == undefined)
         return;
       if ($scope.operation == "unban") {
-        console.log("now show unban tools");
         $scope.operationUnban = true;
 
       } else {
@@ -57,20 +55,19 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
     });
 
     $scope.selectedUser = function(user) {
-      console.log("Selected user");
-      console.log(user);
       var operationObject = {
         room: $scope.room.name,
         user: user
       }
-      ChatResource.userOperation($scope.operation, operationObject);
-      if($scope.sendMsg == ""){
-        $scope.sendMsg =  "/msg "  + user;
+      if ($scope.operation == "pm") {
+        $scope.sendMsg = "/msg " + user;
+      } else {
+        ChatResource.userOperation($scope.operation, operationObject);
       }
     }
 
 
-    angular.element(document).ready(function () {
+    angular.element(document).ready(function() {
       $location.hash('bottom');
       $anchorScroll();
     });
@@ -81,6 +78,7 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
         $scope.room.ops = roomOps;
         $scope.room.users = roomUser;
       }
+      socket.emit("rooms");
     });
 
     //  socket.emit("users");
@@ -95,10 +93,7 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
         message: msg
       });
       $scope.privateMsgs = ChatResource.getPrivateMsgs();
-
       $scope.$apply();
-
-      console.log("Scope has been applyed,  recv priv msg");
     });
 
     $scope.closeAlert = function() {
@@ -142,10 +137,8 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
       }
     }
 
-    $scope.callbackPrv = function(success){
-      console.log("Callback running");
-        console.log(success);
-        $scope.privateMsgs = ChatResource.getPrivateMsgs();
+    $scope.callbackPrv = function(success) {
+      $scope.privateMsgs = ChatResource.getPrivateMsgs();
     }
 
     $scope.leaveChannel = function() {
@@ -182,8 +175,6 @@ angular.module("ChatApp").controller("RoomCtrl", ["$scope", "$location", "$route
         room: $scope.room.name,
         password: $scope.newChannelPass
       }, function(succ) {
-        console.log("Change password results");
-        console.log(succ);
         if (succ) {
           $scope.newChannelPass = "";
           $scope.$apply();
